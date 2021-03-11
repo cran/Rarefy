@@ -5,7 +5,7 @@
 Spatial Explicit Rarefaction Curves
 }
 \description{
-The function calculates directional and non-directional accumulation and turnover curves as a function of sampling effort.
+The function calculates directional and non-directional accumulation curves of species diversity as a function of sampling effort.
 }
 \usage{
 directionalSAC(community,gradient)
@@ -30,9 +30,9 @@ An object of class \code{data.frame} is returned containing the following statis
 
   - N_Exact: Non directional species accumulation curve (classic accumulation curve).
 
-  - Alpha_dir: directional mean number of species in the M plots (for details on the calculation, see the main text).
+  - Alpha_dir: directional mean number of species in the M plots (for details on the calculation, see Ricotta et al., 2019).
 
-  - Beta_M_dir: Directional beta diversity as a function of sampling effort M ( for details on the calculation, see the main text).
+  - Beta_M_dir: Directional beta diversity as a function of sampling effort M ( for details on the calculation, Ricotta et al., 2019).
 
   - Beta_N_dir: Normalized directional beta diversity.
 
@@ -45,7 +45,7 @@ An object of class \code{data.frame} is returned containing the following statis
 }
 \references{
 Ricotta, C., Acosta, A., Bacaro, G., Carboni, M.,
-Chiarucci, A., Rocchini, D., Pavoine, S. (2019) Rarefaction of beta diversity. \emph{Ecological Indicator}, \bold{107}, \emph{in press} \url{https://doi.org/10.1016/j.ecolind.2019.105606}.
+Chiarucci, A., Rocchini, D., Pavoine, S. (2019) Rarefaction of beta diversity. \emph{Ecological Indicators}, \bold{107}, 105606. \doi{10.1016/j.ecolind.2019.105606}.
 
 Chiarucci, A., Bacaro, G., Rocchini, D., Ricotta, C., Palmer, M. W.,
 Scheiner, S. M. (2009) Spatially constrained rarefaction: incorporating
@@ -81,20 +81,17 @@ points(1:70, betas$Alpha_dir, pch=4)
 legend("right", legend=c("Non-directional SAC", 
     "Non-directional alpha diversity", "Directional SAC", 
     "Directional alpha diversity"), pch=1:4) 
-# click on the figure, on an empty area of the figure, to place the legend.
 # M is the number of plots
 
 plot(1:70, betas$Beta_M, xlab="M", ylab="Beta diversity", 
  ylim=range(c(betas$Beta_M_dir, betas$Beta_M)))
 points(1:70, betas$Beta_M_dir, pch=2)
 legend("right", legend=c("Non-directional beta", "Directional beta"), pch=1:2) 
-# click on the figure, on an empty area of the figure, to place the legend.
 
 plot(2:70, betas$Beta_N[2:70], xlab="M", ylab="Normalized beta diversity", 
     ylim=range(c(betas$Beta_N_dir[2:70], betas$Beta_N[2:70])))
 points(2:70, betas$Beta_N_dir[2:70], pch=2)
 legend("right", legend=c("Non-directional beta", "Directional beta"), pch=1:2) 
-# click on the figure, on an empty area of the figure, to place the legend.
 
 plot(2:70, betas$Beta_Autocor[2:70], xlab="M", 
     ylab="Normalized measure of autocorrelation")

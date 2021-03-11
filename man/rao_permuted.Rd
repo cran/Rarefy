@@ -5,7 +5,7 @@
 Functional Rarefaction Curves on Standardized Species Number 
 }
 \description{
-The function calculates functional rarefaction curves using Rao's quadratic entropy (Q) for a reference community. However, functional distance matrixes are calculated by selecting randomly species with their related functional traits from another larger community. The number of species randomly selected correspond to the number of species in the reference community matrix. The relative abundances of the standard community are used instead for the iterative calculation of the rarefacted index. 
+The function calculates functional rarefaction curves using Rao's quadratic entropy (Q) for a reference community. However, functional distance matrixes are calculated by selecting randomly species with their related functional traits from another larger community. The number of species randomly selected corresponds to the number of species in the reference community matrix. The relative abundances of the standard community are used instead for the iterative calculation of the rarefacted index. 
 }
 \usage{
 rao_permuted(comm_st,dist_f,random=99)
@@ -20,9 +20,9 @@ rao_permuted(comm_st,dist_f,random=99)
 \details{
 Rao's quadratic entropy (Rao 1982) is commonly used as a measure of functional diversity. It incorporates both the relative abundance of species with their pairwise functional dissimilarities. It expresses the average difference between two randomly selected individuals with replacements.
 
-The functional dissimilarity matrix is calculated using the function \code{dist.ktab} from the package \code{ade4}. A generalization of the Gower's general coefficient of distance is used to allow the treatment of various statistical types of variables when calculating the functional pairwise distances of the species.
+In the case study below, the functional dissimilarity matrix is calculated using the function \code{dist.ktab} from the package \code{ade4}. A generalization of the Gower's general coefficient of distance is used to allow the treatment of various statistical types of variables when calculating the functional pairwise distances of the species.
 
-To calculate the rarefaction curve, a standard number of species that correspond to the number of species of \code{comm_st} are randomly selected in \code{tr8} with their related functional traits, then a functional distance matrix is obtained and Q is calculated for 1,2,...,N plots using the mean relative abundances of the species in \code{comm_st}. This procedure is repeated \code{random} times and the average rarefaction curve is calculated.
+To calculate the rarefaction curve, a standard number of species that corresponds to the number of species of \code{comm_st} are randomly selected in \code{tr8} with their related functional traits, then a functional distance matrix is obtained and Q is calculated for 1,2,...,N plots using the mean relative abundances of the species in \code{comm_st}. This procedure is repeated \code{random} times and the average rarefaction curve is calculated.
 }
 \value{
 An object of class \code{data.frame} with 3 columns is returned: 
@@ -63,6 +63,7 @@ tr8_N<-duneFVG.tr8$traits.tot[,c(1,3,4)]
 tr8_D<-data.frame(duneFVG.tr8$traits.tot[,2])
 tr8_Q<-duneFVG.tr8$traits.tot[,5:15]
 tr8dist<-dist.ktab(ktab.list.df(list(tr8_N,tr8_D,tr8_Q)),type=c('N','D','Q'))
+tr8dist<-cailliez(tr8dist) 
 ## Rarefaction
 rare<-rao_permuted(duneFVG$alien,tr8dist)
 plot(rare$Rao, ylab="Rao QE", xlab="Number of plots", type="l", ylim=range(rare))

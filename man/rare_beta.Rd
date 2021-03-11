@@ -5,7 +5,7 @@
 Beta Diversity Rarefaction Curve
 }
 \description{
-The function calculates spatial and non-spatially explicit rarefaction curves using different indexes of beta diversity.
+The function calculates spatial and non-spatially explicit rarefaction curves using different indexes of species beta diversity.
 }
 \usage{
 rare_beta(comm,dist_xy=NULL,method=c("whittaker","jaccard","bray","cody"
@@ -19,15 +19,15 @@ rare_beta(comm,dist_xy=NULL,method=c("whittaker","jaccard","bray","cody"
   \item{random}{number of iterations to construct the non-spatially explicit rarefaction curve}
   \item{fun_div}{a string with the name of the function you want to use to calculate the rarefaction. The function must calculate the value of the chosen index per plot and return a pairwise distance matrix with the values.}
   \item{args}{a list with the arguments for fun_div. The value \code{NA} should be given in place of the community matrix in the list. The names of the elements must correspond to the names of the arguments of the function passed.}
-   \item{verbose}{if TRUE, the arguments of \code{fun_div} are inserted interactevely by the user.}
+   \item{verbose}{if TRUE, the arguments of \code{fun_div} are inserted interactively by the user.}
   \item{spatial}{if TRUE, the function calculates the spatially-explicit rarefaction.}
 }
 \details{
-The avaiable methods are:
+The available methods are:
 
-\code{whittaker}: Whittaker's species turnover calculates how many times there is a change in species composition among the plots: \deqn{\beta_w=\gamma/\alpha -1}{beta_w= gamma/alpha - 1} 
+\code{whittaker}: Whittaker's species turnover calculates how many times there is a change in species composition among the plots: \deqn{\beta_w=\gamma/\alpha -1}{beta_w= gamma/alpha - 1} where \eqn{\gamma}{gamma} is the species richness over all plots compared and \eqn{\alpha}{alpha} the average species richness within a single plot.
 
-\code{jaccard}: Jaccard similarity coefficient is a pairwise measure of similarity between plots: \deqn{\beta_j=a/(\alpha_1+\alpha_2-a)}{beta_j= a/(alpha_1 + alpha_2 – a)} where \eqn{a} is the number of species in common between two plots, and \eqn{\alpha_1} and \eqn{\alpha_2} are the values of alpha diversity (species richness) of the 2 plots compared. The rarefaction curve is calculated with the mean of the pairwise diversities in N random plots.
+\code{jaccard}: Jaccard dissimilarity coefficient is a pairwise measure of dissimilarity between plots: \deqn{\beta_j=a/(\alpha_1+\alpha_2-a)}{beta_j= a/(alpha_1 + alpha_2 – a)} where \eqn{a} is the number of species in common between two plots, and \eqn{\alpha_1}{alpha_1} and \eqn{\alpha_2}{alpha_2} are the values of alpha diversity (species richness) of the 2 plots compared. The rarefaction curve is calculated with the mean of the pairwise diversities in N random plots.
 
 \code{bray}: Bray-Curtis dissimilarity is a pairwise measure of similarity between plots weighted by the abundances of the species: \deqn{\beta_{bray}=\frac{\sum_{i} \left | x_i - x_j \right |}{\sum_{i} x_i+x_j}}{beta_bray= sum_i (abs(x_i - x_j))/sum_i(x_i + x_j)} where \eqn{x_i} and \eqn{x_j} are the abundances of the species \eqn{x} in the plots \eqn{i} and \eqn{j}.
 
@@ -60,10 +60,11 @@ with contributions of Sandrine Pavoine.
 }
 
 \examples{
-\donttest{
+\dontrun{
+#Time consuming
 data(duneFVG)
 data(duneFVG.xy)
-dist_sp<-vegdist(duneFVG.xy$tot.xy,'euclidean')
+dist_sp<-dist(duneFVG.xy$tot.xy,'euclidean')
 ## Spatial explicit rarefaction
 ## Take care that the following scripts may be a bit time-consuming 
 ## depending on your computer (less than a minute to a few minutes)

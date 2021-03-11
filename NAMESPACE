@@ -1,10 +1,11 @@
-importFrom("stats", "sd", "as.dist")
-importFrom("geiger", "treedata", "tips")
-importFrom("adiv", "pIa", "evodivparam","rare_Rao")
+importFrom("stats", "sd", "as.dist", "dist")
+importFrom("geiger", "tips", "treedata")
+importFrom("adiv", "pIa", "evodivparam","rare_Rao","speciesdiv")
 importFrom("ade4", "ktab.list.df", "dist.ktab","is.euclid")
 importFrom("methods", "as")
-importFrom("vegan", "vegdist", "designdist", "specnumber","specaccum")
-importFrom("dplyr", "cummean")
+importFrom("vegan", "vegdist", "designdist", "specnumber", "specaccum")
+importFrom("dplyr", "cummean", "%>%")
+importFrom("ape", "drop.tip")
 
 exportPattern("^[^\\.]")
 

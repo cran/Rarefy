@@ -164,7 +164,7 @@ rare_beta<-function(comm,dist_xy=NULL,method=c("whittaker","jaccard","bray","cod
         if(spatial) v<-nami[order(dist_xy[,i])]
         else v<-sample(1:nrow(comm),nrow(comm))
         x<-comm[v,]
-        for(i in 2:nrow(comm)) {
+        for(j in 2:nrow(comm)) {
           l[[1]]<-x[1:j,]
           r_fin[i,]<-do.call(f,l)
         }
@@ -189,9 +189,9 @@ rare_beta<-function(comm,dist_xy=NULL,method=c("whittaker","jaccard","bray","cod
         if(spatial) v<-nami[order(dist_xy[,i])]
         else v<-sample(1:nrow(comm),nrow(comm))
         x<-comm[v,]
-        for(i in 2:nrow(comm)) {
-          l[[1]]<-x[1:j,]
-          r_fin[i,]<-do.call(f,l)
+        for(j in 2:nrow(comm)) {
+          args[[ind]]<-x[1:j,]
+          r_fin[i,]<-do.call(f,args)
         }
       }
     }

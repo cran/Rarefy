@@ -1,5 +1,5 @@
 
-ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_div'), tau=NA, q=0, comparison=FALSE, fun_div=NULL, args=NULL, verbose=FALSE) {
+ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_div'), tau=NA, q=0, comparison=FALSE, resampling=99, fun_div=NULL, args=NULL, verbose=FALSE) {
   
   method <- method[1]
   if (!method %in% c("rao", "chao", "fun_div")) stop("Unavailable method")
@@ -12,10 +12,24 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
     comm<-comm[,v]
   }
     
-  if (!inherits(dist_xy, "dist")) stop("Object of class 'dist' expected for dist_xy") 
-  dist_xy<-as.matrix(dist_xy) 
-  if (any(dist_xy<0)) stop("Negative value in dist_xy") 
+  if (!inherits(dist_xy, "dist")){
+    if(!is.vector(dist_xy)){
+      if(!is.matrix(dist_xy)){
+        if(!is.data.frame(dist_xy))
+          stop("Object dist_xy must be of class vector, matrix, data.frame or dist") }}}
+  if(!inherits(dist_xy, "dist")) {
+    if(is.vector(dist_xy)){
+      if(length(dist_xy)!=nrow(comm)) stop("Incorrect definition of object gradient")
+      if(!is.null(names(dist_xy))){
+        if(any(!rownames(comm)%in%names(dist_xy))) stop("Names in gradient must be the same as row names in community")
+        dist_xy<-dist_xy[rownames(comm)] }}
+    else { if (nrow(comm) != nrow(dist_xy)) stop("comm and dist_xy don't have the same number of plots") }
+    dist_xy<-dist(scale(dist_xy)) 
+    warning("dist_xy is used to calculate a distance matrix between sampling units using the method euclidean of the function dist()")
+  }
+  dist_xy<-as.matrix(dist_xy)
   if (nrow(comm) != nrow(dist_xy)) stop("comm and dist_xy don't have the same number of plots")
+  if (any(dist_xy<0)) stop("Negative value in dist_xy")
   if(!is.null(rownames(dist_xy)) && !is.null(rownames(comm)) ) {
     if(any(!rownames(comm)%in%rownames(dist_xy))) stop("comm and dist_xy must have the same names for the plots")
   } else if(!is.null(rownames(dist_xy)) && is.null(rownames(comm))) {
@@ -23,7 +37,6 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
     warning("comm has no row names")
     warning("row names of dist_xy set as row names of comm")
   } 
-  
   
   if(is.null(dist_f) && method!='fun_div') stop("dist_f must have a value")
   if(!is.null(dist_f)) {
@@ -51,19 +64,20 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
     df<-data.frame(fin,IC_up,IC_low)
     colnames(df)<-c('Rarefaction','IC_up','IC_low')
     if(comparison) {
-      nsr<-rare_Rao(comm,as.dist(dist_f))
+      nsr<-rare_Rao(comm,as.dist(dist_f),resampling=resampling)
       df<-data.frame(df,nsr)
     }
   }
   
   else if(method=='chao') {
     dist_f[which(dist_f>tau,arr.ind = T)] <- tau
+    com<-sweep(comm,1,rowSums(comm),"/")
     nami <- rownames(comm)
     r_fin<-array(dim = c(nrow(comm), nrow(comm)))
     for(i in 1:nrow(comm)) {
       v<-nami[order(dist_xy[, i])]
-      x<-comm[v,]
-      x<-apply(x,2,cumsum)
+      x<-com[v,]
+      x<-apply(x,2,cummean)
       for(j in 1:nrow(comm)) {
         v1<-as.matrix(x[j,])
         a <- as.vector((1 - dist_f/tau) %*% as.vector(v1) )
@@ -85,11 +99,11 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
     df<-data.frame(fin,IC_up,IC_low)
     colnames(df)<-c('Rarefaction','IC_up','IC_low')
     if(comparison) {
-      r_fin<-array(dim = c(99, nrow(comm)))
-      for(i in 1:99) {
+      r_fin<-array(dim = c(resampling, nrow(comm)))
+      for(i in 1:resampling) {
         v<-sample(1:nrow(comm),nrow(comm))
-        x<-comm[v,]
-        x<-apply(x,2,cumsum)
+        x<-com[v,]
+        x<-apply(x,2,cummean)
         for(j in 1:nrow(comm)) {
           v1<-as.matrix(x[j,])
           a <- as.vector((1 - dist_f/tau) %*% as.vector(v1) )
@@ -190,7 +204,7 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
         x<-comm[v,]
         x<-apply(x,2,cumsum)
         l[[1]]<-x
-        r_fin[i,]<-do.call(f,l)
+        r_fin[i,]<-as.matrix(do.call(f,l))
       }
       fin<-colMeans(r_fin,na.rm=TRUE)
       IC_up <- fin + (1.96*(sd(r_fin,na.rm=TRUE)/sqrt(nrow(comm))))
@@ -198,13 +212,13 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
       df<-data.frame(fin,IC_up,IC_low)
       colnames(df)<-c('Rarefaction','IC_up','IC_low')
       if(comparison) {
-        r_fin<-array(dim = c(999,nrow(comm)))
-        for(i in 1:999) {
+        r_fin<-array(dim = c(resampling,nrow(comm)))
+        for(i in 1:resampling) {
           v<-sample(1:nrow(comm),nrow(comm))
           x<-comm[v,]
           x<-apply(x,2,cumsum)
           l[[1]]<-x
-          r_fin[i,]<-do.call(f,l)
+          r_fin[i,]<-as.matrix(do.call(f,l))
         }
         fin<-colMeans(r_fin,na.rm=TRUE)
         IC_up <- fin + (1.96*(sd(r_fin,na.rm=TRUE)/sqrt(nrow(comm))))
@@ -218,7 +232,7 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
     else {
       if(!all(names(args) %in% v)) stop("The arguments must be the ones specified by the function")
       
-      ind<-match(NA,unlist(a))
+      ind<-match(NA,unlist(args))
       ind<-match(names(unlist(args)[ind]), names(args))
       
       nami<-rownames(comm)
@@ -228,7 +242,7 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
         x<-comm[v,]
         x<-apply(x,2,cumsum)
         args[[ind]]<-x
-        r_fin[i,]<-do.call(f,args)
+        r_fin[i,]<-as.matrix(do.call(f,args))
       }
       fin<-colMeans(r_fin,na.rm=TRUE)
       IC_up <- fin + (1.96*(sd(r_fin,na.rm=TRUE)/sqrt(nrow(comm))))
@@ -237,13 +251,13 @@ ser_functional<-function(comm, dist_f=NULL, dist_xy, method=c('rao','chao','fun_
       colnames(df)<-c('Rarefaction','IC_up','IC_low')
     }
     if(comparison) {
-      r_fin<-array(dim = c(999, nrow(comm)))
-      for(i in 1:999) {
+      r_fin<-array(dim = c(resampling, nrow(comm)))
+      for(i in 1:resampling) {
         v<-sample(1:nrow(comm),nrow(comm))
         x<-comm[v,]
         x<-apply(x,2,cumsum)
         args[[ind]]<-x
-        r_fin[i,]<-do.call(f,args)
+        r_fin[i,]<-as.matrix(do.call(f,args))
       }
       fin<-colMeans(r_fin,na.rm=TRUE)
       IC_up <- fin + (1.96*(sd(r_fin,na.rm=TRUE)/sqrt(nrow(comm))))

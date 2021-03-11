@@ -2,10 +2,10 @@
 \alias{rarexpected_fun}
 
 \title{
-Functional Dissimilarity Rarefaction Curves
+Functional Diversity Rarefaction Curves
 }
 \description{
-The function calculates functional dissimilarity rarefaction curves using the method proposed by Ricotta et al. (2010).
+The function calculates functional diversity rarefaction curves using the method proposed by Ricotta et al. (2010).
 }
 \usage{
 rarexpected_fun(comm,dist_f)
@@ -16,10 +16,10 @@ rarexpected_fun(comm,dist_f)
   \item{dist_f}{an object of class \code{dist} containing the pairwise functional distances among species. The distance matrix should be squared Euclidean or simply Euclidean.} 
 }
 \details{
-The expected richness of species at an increasingly larger cumulative number of plots N is used for the calculation of Rao's quadratic entropy to obtain an expected functional dissimilarity in the N random plots. The expected richness is the sum of the probability for every species in the community  to find that species in the N random plots.
+The expected occupancy frequencies for species at an increasingly larger cumulative number of plots N are used for the calculation of Rao's quadratic entropy to obtain an expected functional diversity between species in the N random plots. The expected occupancy frequency is the probability for every species in the community  to find that species in the N random plots.
 }
 \value{
-A vector containing the values of the expected functional dissimilarity for every sampling dimension is returned.
+A vector containing the values of the expected functional diversity for every sampling dimension is returned.
 }
 \references{
 Botta-Dukat, Z. (2005) Rao's quadratic entropy as a measure of functional diversity
@@ -47,6 +47,7 @@ tr8_N<-duneFVG.tr8$traits.tot[,c(1,3,4)]
 tr8_D<-data.frame(duneFVG.tr8$traits.tot[,2])
 tr8_Q<-duneFVG.tr8$traits.tot[,5:15]
 tr8dist<-dist.ktab(ktab.list.df(list(tr8_N,tr8_D,tr8_Q)),type=c('N','D','Q'))
+tr8dist<-cailliez(tr8dist) 
 d<-decostand(duneFVG$total, method='pa')
 rare<-rarexpected_fun(d,tr8dist)
 plot(rare, ylab="Rao QE", xlab="Number of plots", type="l")

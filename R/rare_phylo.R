@@ -27,7 +27,7 @@ rare_phylo<-function(comm,tree=NULL,method=c("faith", "barker", "Ia", "hill", "t
       v <- sample(1:nrow(comm),nrow(comm))
       x<-comm[v,]
       x<-apply(x,2,cumsum)
-      sub_tree<-apply(x,1,function(x) treedata(tree,x[x>0],warnings = FALSE)$phy)
+      sub_tree<-apply(x,1,function(x) drop.tip(tree,which(!(tree$tip.label %in% colnames(comm)[x>0]))))
       r_fin[i,]<-unlist(lapply(sub_tree,function(x) sum(x$edge.length)))
     }
     rare<-colMeans(r_fin)
@@ -45,7 +45,7 @@ rare_phylo<-function(comm,tree=NULL,method=c("faith", "barker", "Ia", "hill", "t
       v <- sample(1:nrow(comm),nrow(comm))
       x<-comm[v,]
       x<-apply(x,2,cumsum)
-      sub_tree<-apply(x,1,function(x) treedata(tree,x[x>0],warnings = FALSE)$phy)
+      sub_tree<-apply(x,1,function(x) drop.tip(tree,which(!(tree$tip.label %in% colnames(comm)[x>0]))))
       lv<-lapply(sub_tree,function(y) apply(y$edge,1,function(z) get.leaves(z,y)))
       for(j in 1:nrow(x)) {
         v1<-x[j,]
