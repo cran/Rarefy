@@ -10,6 +10,7 @@ require(ape)
 require(vegan)
 require(phyloregion)
 require(raster)
+require(sf)
 
 ## ----Tab01, echo=FALSE, warning=FALSE, message=FALSE--------------------------
 require(kableExtra)

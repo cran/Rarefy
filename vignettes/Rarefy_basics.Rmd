@@ -26,6 +26,7 @@ require(ape)
 require(vegan)
 require(phyloregion)
 require(raster)
+require(sf)
 ```
 
 ## Introduction

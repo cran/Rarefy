@@ -45,8 +45,8 @@ rare_alpha<-function(comm,dist_xy=NULL,method=c("HCDT","hill","fun_div"),q=0,ran
     r_fin<-array(dim = c(ifelse(spatial,nrow(comm),random),nrow(comm)))
     nami<-rownames(comm)
     for(i in 1:ifelse(spatial,nrow(comm),random)) {
-      if(spatial) v<-nami[order(dist_xy[,i])]
-      else v<-sample(1:nrow(comm),nrow(comm))
+      if(spatial) v <- nami[order(dist_xy[,i])]
+      else v <- sample(1:nrow(comm),nrow(comm))
       x<-comm[v,]
       x<-sweep(x,1,rowSums(x),"/")
       x<-apply(x,2,cummean) 
